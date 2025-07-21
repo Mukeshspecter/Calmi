@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#8b5cf6" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Calmi AI" />
+    
+    <title>Calmi AI - AI Companions for Mental Wellness & Career Growth</title>
+    <meta name="description" content="Voice-based AI assistants: Donna for therapy and Buddy for career guidance" />
+    
+    <!-- PWA Meta Tags -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico" />
+    
+    <style>
+      /* Critical CSS for mobile performance */
+      @keyframes fade-in {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      @keyframes slide-up {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      @keyframes scale-in {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      
+      .animate-fade-in {
+        animation: fade-in 0.3s ease-out;
+      }
+      
+      .animate-slide-up {
+        animation: slide-up 0.5s ease-out;
+      }
+      
+      .animate-scale-in {
+        animation: scale-in 0.4s ease-out;
+      }
+      
+      /* Mobile-optimized transitions */
+      * {
+        transition-property: transform, opacity, background-color, border-color, color, box-shadow;
+        transition-duration: 0.2s;
+        transition-timing-function: ease-out;
+      }
+      
+      /* Touch-friendly button effects */
+      @media (max-width: 768px) {
+        button:active {
+          transform: scale(0.98);
+          opacity: 0.8;
+        }
+      }
+      
+      /* Enhanced button hover effects for desktop */
+      @media (min-width: 769px) {
+        button:hover {
+          transform: translateY(-1px);
+        }
+        
+        button:active {
+          transform: translateY(0);
+        }
+      }
+      
+      /* Loading screen */
+      .loading-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        opacity: 1;
+        transition: opacity 0.5s ease-out;
+      }
+      
+      .loading-screen.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+      
+      .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top: 4px solid white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    </style>
+    
+    <!-- ElevenLabs ConvAI Widget Script - Load early for better performance -->
+    <script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
+    <script>
+      // Enhanced widget readiness detection with mobile optimization
+      window.addEventListener('load', function() {
+        console.log('Page loaded, ElevenLabs widget should be available');
+        
+        // Hide loading screen
+        const loadingScreen = document.querySelector('.loading-screen');
+        if (loadingScreen) {
+          setTimeout(() => {
+            loadingScreen.classList.add('hidden');
+            setTimeout(() => {
+              loadingScreen.remove();
+            }, 500);
+          }, 1000);
+        }
+        
+        // Check for widget availability with multiple attempts
+        let attempts = 0;
+        const maxAttempts = 10;
+        
+        const checkWidget = () => {
+          attempts++;
+          if (window.customElements && customElements.get('elevenlabs-convai')) {
+            console.log('ElevenLabs ConvAI widget is ready');
+            // Dispatch custom event to notify components
+            window.dispatchEvent(new CustomEvent('elevenlabs-ready'));
+          } else if (attempts < maxAttempts) {
+            console.log(`ElevenLabs widget not found, attempt ${attempts}/${maxAttempts}, retrying...`);
+            setTimeout(checkWidget, 500);
+          } else {
+            console.warn('ElevenLabs widget failed to load after maximum attempts');
+          }
+        };
+        
+        // Start checking after a small delay
+        setTimeout(checkWidget, 1000);
+      });
+      
+      // Prevent zoom on double tap (iOS)
+      let lastTouchEnd = 0;
+      document.addEventListener('touchend', function (event) {
+        const now = (new Date()).getTime();
+        if (now - lastTouchEnd <= 300) {
+          event.preventDefault();
+        }
+        lastTouchEnd = now;
+      }, false);
+      
+      // Optimize viewport for mobile
+      function setViewportHeight() {
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+      }
+      
+      window.addEventListener('resize', setViewportHeight);
+      window.addEventListener('orientationchange', setViewportHeight);
+      setViewportHeight();
+    </script>
+  </head>
+  <body>
+    <!-- Loading Screen -->
+    <div class="loading-screen">
+      <div class="loading-spinner"></div>
+    </div>
+    
+    <!-- Netlify Forms Detection -->
+    <form name="calmi-signup" netlify="true" hidden>
+      <input type="text" name="fullName" />
+      <input type="email" name="email" />
+      <input type="password" name="password" />
+      <input type="password" name="confirmPassword" />
+      <input type="text" name="timestamp" />
+    </form>
+    
+    <form name="calmi-login" netlify="true" hidden>
+      <input type="email" name="email" />
+      <input type="password" name="password" />
+      <input type="text" name="timestamp" />
+    </form>
+    
+    <form name="calmi-password-reset" netlify="true" hidden>
+      <input type="email" name="email" />
+      <input type="password" name="newPassword" />
+      <input type="password" name="confirmPassword" />
+      <input type="text" name="action" />
+      <input type="text" name="timestamp" />
+    </form>
+    
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
